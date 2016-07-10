@@ -51,7 +51,7 @@ public class Tab extends DefaultComponent {
         for (int i = 0, xOff = 0; i < m.length(); i++, xOff += size) {
             int index = SpriteSheet.ALPHA.indexOf(m.charAt(i) + "");
             if(index < 0) {
-                System.out.println("found unparseable char: " + m.charAt(i));
+                //unparsable char
                 continue;
             }
             Sprite let = Sprite.scaleSprite(SpriteSheet.ALPHABET.getSprites()[index], size, size);

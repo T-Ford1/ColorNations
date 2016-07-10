@@ -14,7 +14,6 @@ import java.awt.Point;
 public class Player extends Mob {
 
     private int renderX, renderY;
-    private int respawn;
 
     public Player(Team n, int xR, int yR) {
         super(n, n.getSpawnPoint().x * Game.SIZE, n.getSpawnPoint().y * Game.SIZE);
@@ -30,9 +29,6 @@ public class Player extends Mob {
     }
 
     public void render(GameCanvas screen) {
-        if (respawn > 0) {
-            return;
-        }
         super.render(screen);
     }
 
@@ -48,20 +44,15 @@ public class Player extends Mob {
 
     public void remove() {
         super.remove();
-        respawn = 600;//10 sec
     }
 
     public void update() {
-        if (respawn > 0) {
-            System.out.println("update stuff");
-            respawn--;
-        } else {
-            move();
-            if (mouse.isPressed()) {
-                shoot(new Point(mouse.getX() - getRenderX() - 8, mouse.getY() - getRenderY() - 90));
-            }
-            super.update();
+        move();
+        if (mouse.isPressed()) {
+            shoot(new Point(mouse.getX() - getRenderX() - 8, mouse.getY() - getRenderY() - 90));
         }
+        super.update();
+
     }
 
     public int getMouseX() {

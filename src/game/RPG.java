@@ -65,7 +65,7 @@ public class RPG extends Level {
                 }
             }
         } catch (IOException e) {
-            System.out.println(e);
+            //System.out.println(e);
         }
     }
 

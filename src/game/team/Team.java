@@ -65,7 +65,6 @@ public class Team {
                 }
             }
         }
-        //System.out.println(temp);
         spawn = temp;
     }
 
@@ -203,7 +202,6 @@ public class Team {
         if (territories[y][x]) {
             return;
         }
-        System.out.println(this + ", captured " + x + ", " + y);
         captures++;
         controlled++;
         territories[y][x] = true;

@@ -41,7 +41,7 @@ public abstract class Level {
         int rY = size.height / 2 - 16;
         //int x = 20 * SIZE;
         //int y = 40 * SIZE;
-        add(new Player(getRandomNation(), rX, rY));
+        add(new Player(teams.get(2), rX, rY));
         if(getClientPlayer().getTeam() instanceof RedTeam) {
             teams.get(1).addMob();
             teams.get(2).addMob();
@@ -76,7 +76,6 @@ public abstract class Level {
     }
 
     public void update() {
-        //System.out.println("entities");
         for (int i = 0; i < entities.size(); i++) {
             if (entities.get(i).isRemoved()) {
                 entities.remove(i);
@@ -93,7 +92,8 @@ public abstract class Level {
                 player.setPosition(spawn.x * Game.SIZE, spawn.y * Game.SIZE);
                 player.setHealth(player.getMaxHealth());
                 player.setRemoved(false);
-                MessageBar.addMessage(1, "You Died!");
+                MessageBar.addMessage(1, "You Lost!");
+                resetTeams();
             }
         });
         for (int i = 0; i < teams.size(); i++) {

@@ -37,7 +37,6 @@ public class AStarPath {
         while (!open.isEmpty()) {
             Collections.sort(open);
             Node nearest = open.get(open.size() - 1);
-            //System.out.println(nearest.getPos());
             open.remove(open.size() - 1);
             if (nearest.getHCost() == 0) {
                 while (nearest.getParent() != null) {

@@ -133,7 +133,7 @@ public class Frame extends JFrame implements Runnable {
     
     public static void close() {
         double ratio = (double) renders / (double) ticks;
-        System.out.println("Average FPS: " + (int) (60 * ratio));
+        //System.out.println("Average FPS: " + (int) (60 * ratio));
         Network.close();
         running = false;
         System.exit(0);
