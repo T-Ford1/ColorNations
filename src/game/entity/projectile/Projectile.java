@@ -20,7 +20,7 @@ public class Projectile extends Entity {
     public static final int damage = 200, rateOfFire = 20;
     public static final double speed = 16, range = 450, rangeSqr = range * range;
     public final Mob source;
-    
+
     private final int size;
     private final double xStep, yStep, theta;
 
@@ -35,26 +35,24 @@ public class Projectile extends Entity {
         yStep = Math.sin(theta) * speed;
         move((Math.cos(theta) * 10), (Math.sin(theta) * 10), false);
     }
-    
+
     public void render(GameCanvas c) {
         if (!removed) {
             c.renderPixels(getX(), getY(), size, size, animation.getSprite(0, 0).getPixels());
         }
     }
-    
+
     protected Rectangle getBounds() {
         return new Rectangle(getX() + 4, getY() + 4, 20, 20);
     }
-    
+
     protected void onCollision(Object collision) {
         removed = true;
         for (int i = 0; i < 20; i++) {
             //LEVEL.add(new DefaultParticle(this, getX() + 15, getY() + 15, 10 + random.nextInt(25), speed / 7.));
         }
-        if(collision instanceof Mob) {
-            Mob m = (Mob) collision;
-            if(m.getTeam().equals(source.getTeam())) return;
-            m.doDamage(damage);
+        if (collision instanceof Mob) {
+            ((Mob) collision).doDamage(damage);
         }
     }
 

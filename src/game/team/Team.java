@@ -203,6 +203,7 @@ public class Team {
         if (territories[y][x]) {
             return;
         }
+        System.out.println(this + ", captured " + x + ", " + y);
         captures++;
         controlled++;
         territories[y][x] = true;
@@ -213,6 +214,7 @@ public class Team {
             return;
         }
         controlled--;
+        captures--;
         territories[y][x] = false;
     }
 
