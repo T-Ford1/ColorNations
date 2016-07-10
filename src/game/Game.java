@@ -35,6 +35,11 @@ public class Game extends GraphicsComponent {
         LEVEL.resetClientPlayer();
         CHUNKS = new VisibleChunks();
     }
+    
+    public static void reset() {
+        LEVEL.init();
+        LEVEL.resetAll();
+    }
 
     public void update() {
         LEVEL.update();

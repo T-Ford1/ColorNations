@@ -128,7 +128,7 @@ public class Frame extends JFrame implements Runnable {
         //new Background(panel.getSize(), components.gui.Type.SHIFTING);
         new Game(render.getSize());
         new MenuBar(render.getSize());
-        new ToolBar(render.getSize());
+        //new ToolBar(render.getSize());
     }
     
     public static void close() {

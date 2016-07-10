@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class Team {
 
     private int controlled, spawn;
-    protected int toSpawn;
+    protected final int toSpawn;
     private final boolean[][] territories;
     private final boolean player;
     private final ArrayList<AIMob> mobs;

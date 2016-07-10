@@ -15,7 +15,7 @@ public class ParticleGenerator {
     
     public ParticleGenerator(Level l, Particle p, int num) {
         for (int i = 0; i < num; i++) {
-            l.add(p);
+            //l.add(p);
         }
     }
 }

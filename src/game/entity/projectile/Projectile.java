@@ -33,7 +33,7 @@ public class Projectile extends Entity {
         source = s;
         xStep = Math.cos(theta) * speed;
         yStep = Math.sin(theta) * speed;
-        move((Math.cos(theta) * 25), (Math.sin(theta) * 25), false);
+        move((Math.cos(theta) * 30), (Math.sin(theta) * 30), false);
     }
 
     public void render(GameCanvas c) {

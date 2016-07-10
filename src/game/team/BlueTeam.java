@@ -18,7 +18,6 @@ public class BlueTeam extends Team {
 
     public BlueTeam(Dimension mapSize) {
         super(mapSize, true);
-        toSpawn = 200;
         filter = new Color(0, 0, 50);
         slug = SpriteSet.getBluePlayer();
         super.c = CaptureAI.b;

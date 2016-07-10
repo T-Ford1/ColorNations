@@ -21,7 +21,24 @@ public class DefendAI extends AIBase {
     public static final DefendAI b = new DefendAI();
 
     public Point nextPoint(AIMob m) {
+        if (m.getTeam() instanceof BlueTeam) {
+            return defendPlayer(m);
+        }
         Point p = m.getTeam().getSpawnPoint();
+        Point next = null;
+        while (next == null) {
+            int x = p.x - 5 + (int) (Math.random() * 10);
+            int y = p.y - 5 + (int) (Math.random() * 10);
+            Tile t = Game.LEVEL.getTile(x, y);
+            if (!t.isSolid()) {
+                next = new Point(x, y);
+            }
+        }
+        return next;
+    }
+
+    private Point defendPlayer(AIMob m) {
+        Point p = Game.LEVEL.getPlayer().getTilePos();
         Point next = null;
         while (next == null) {
             int x = p.x - 5 + (int) (Math.random() * 10);

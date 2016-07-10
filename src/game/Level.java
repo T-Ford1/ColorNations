@@ -3,6 +3,7 @@ package game;
 import components.gui.MessageBar;
 import static game.Game.LEVEL;
 import game.entity.Entity;
+import game.entity.mob.Mob;
 import game.entity.mob.Player;
 import game.team.BlueTeam;
 import game.team.GreenTeam;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
  */
 public abstract class Level {
 
-    private final ArrayList<Entity> entities;
+    private final ArrayList<Mob> mobs;
     private Player player;
     protected ArrayList<Team> teams;
     protected Dimension size/*screensize*/, mapSize/*tiles*/, mapPixels;/*pixels*/
@@ -30,7 +31,7 @@ public abstract class Level {
     protected int[] tiles;
 
     public Level(int width, int height) {
-        entities = new ArrayList<>();
+        mobs = new ArrayList<>();
         teams = new ArrayList<>();
         size = new Dimension(width, height);
     }
@@ -45,14 +46,14 @@ public abstract class Level {
         teams.get(1).addMob();
     }
 
-    private void resetAll() {
+    public void resetAll() {
+        resetEntities();
         resetTeams();
         resetClientPlayer();
-        resetEntities();
     }
 
     public void resetEntities() {
-        entities.clear();
+        mobs.clear();
     }
 
     public void resetTeams() {
@@ -64,17 +65,19 @@ public abstract class Level {
 
     protected abstract void init();
 
-    public final void add(Entity e) {
-        entities.add(e);
+    public final void add(Mob e) {
+        mobs.add(e);
     }
 
     public void update() {
-        for (int i = 0; i < entities.size(); i++) {
-            if (entities.get(i).isRemoved()) {
-                entities.remove(i);
+        boolean blueTeam = false;
+        for (int i = 0; i < mobs.size(); i++) {
+            if (mobs.get(i).isRemoved()) {
+                mobs.remove(i);
                 i--;
             } else {
-                entities.get(i).update();
+                mobs.get(i).update();
+                if(blueTeam) blueTeam = mobs.get(i).getTeam() instanceof BlueTeam;
             }
         }
         player.update();
@@ -84,21 +87,14 @@ public abstract class Level {
             player.setHealth(player.getMaxHealth());
             player.setRemoved(false);
             MessageBar.addMessage(1, "You Lost!");
-            resetAll();
+            Game.reset();
         }
         for (int i = 0; i < teams.size(); i++) {
-            Team t = teams.get(i);
-            t.update();
-            if (t.size() == 0) {
-                System.out.println("remove");
-                teams.remove(t);
-                i--;
-            }
+            teams.get(i).update();
         }
-        if(teams.size() == 1 && teams.get(0) instanceof BlueTeam) {
-            System.out.println("win");
-            resetAll();
+        if(blueTeam) {
             MessageBar.addMessage(1, "You Win :D");
+            Game.reset();
         }
     }
 
@@ -160,7 +156,7 @@ public abstract class Level {
     public void render(GameCanvas frame) {
         Point p = Game.getRenderPoint(LEVEL.getPlayer());
         renderBackground(p, frame);
-        entities.stream().forEach((e) -> {
+        mobs.stream().forEach((e) -> {
             e.render(frame);
         });
         player.render(frame);
@@ -217,7 +213,7 @@ public abstract class Level {
         if (e instanceof Player) {
             return null;
         }
-        for (Entity entity : entities) {
+        for (Entity entity : mobs) {
             if (entity == e) {
                 continue;
             }
@@ -235,7 +231,7 @@ public abstract class Level {
         return teams;
     }
 
-    public ArrayList<Entity> getEntities() {
-        return entities;
+    public ArrayList<Mob> getEntities() {
+        return mobs;
     }
 }
