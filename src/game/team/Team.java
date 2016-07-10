@@ -42,7 +42,7 @@ public class Team {
         player = p;
         controlled = 0;
         spawn = 0;
-        toSpawn = 100;
+        toSpawn = 200;
         setSpawn();
     }
 
@@ -103,7 +103,7 @@ public class Team {
             }
         }
         if (player) {
-            MessageBar.addMessage(0, 200 - spawn + "");
+            MessageBar.addMessage(0, toSpawn - spawn + "");
             MessageBar.addMessage(2, controlled + "");
         }
     }

@@ -70,14 +70,12 @@ public abstract class Level {
     }
 
     public void update() {
-        boolean blueTeam = false;
         for (int i = 0; i < mobs.size(); i++) {
             if (mobs.get(i).isRemoved()) {
                 mobs.remove(i);
                 i--;
             } else {
                 mobs.get(i).update();
-                if(blueTeam) blueTeam = mobs.get(i).getTeam() instanceof BlueTeam;
             }
         }
         player.update();
@@ -86,14 +84,15 @@ public abstract class Level {
             player.setPosition(spawn.x * Game.SIZE, spawn.y * Game.SIZE);
             player.setHealth(player.getMaxHealth());
             player.setRemoved(false);
-            MessageBar.addMessage(1, "You Lost!");
+            MessageBar.addMessage(1, "You Lost");
             Game.reset();
         }
         for (int i = 0; i < teams.size(); i++) {
             teams.get(i).update();
+            System.out.println(teams.get(i) + ", " + teams.get(i).size()); 
         }
-        if(blueTeam) {
-            MessageBar.addMessage(1, "You Win :D");
+        if(teams.get(0).size() == 0 && teams.get(1).size() == 0) {
+            MessageBar.addMessage(1, "You Win");
             Game.reset();
         }
     }
