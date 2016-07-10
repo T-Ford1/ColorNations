@@ -122,7 +122,7 @@ public abstract class Mob extends Entity {
      * @return
      */
     protected Rectangle getBounds() {
-        return new Rectangle(getX(), getY(), 24, 24);
+        return new Rectangle(getX() - 8, getY(), 24, 24);
     }
 
     //protected abstract void onCollisionTile(Tile collide);
