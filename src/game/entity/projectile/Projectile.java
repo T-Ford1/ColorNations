@@ -5,7 +5,6 @@
  */
 package game.entity.projectile;
 
-import static game.Game.LEVEL;
 import game.GameCanvas;
 import game.entity.Entity;
 import game.entity.mob.Mob;
@@ -34,7 +33,7 @@ public class Projectile extends Entity {
         source = s;
         xStep = Math.cos(theta) * speed;
         yStep = Math.sin(theta) * speed;
-        move((Math.cos(theta) * 50), (Math.sin(theta) * 50), false);
+        move((Math.cos(theta) * 10), (Math.sin(theta) * 10), false);
     }
     
     public void render(GameCanvas c) {
