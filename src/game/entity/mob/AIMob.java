@@ -21,15 +21,18 @@ public class AIMob extends Mob {
     private AIBase ai;
     private ArrayList<Point> target;
     public Mob enemy;
+    private int lastScan;
 
     public AIMob(Team n, int x, int y) {
         super(n, x, y);
+        lastScan = 600;
     }
 
     public void update() {
-        if(enemy != null && enemy.isRemoved()) {
-            target = null;
-            enemy = null;
+        if(++lastScan > 600) {
+            lastScan = 600;
+            enemy = ai.nextTarget(this);
+            target = AStarPath.getPath(getTilePos(), ai.nextPoint(this));
         }
         if (enemy == null) {
             enemy = ai.nextTarget(this);

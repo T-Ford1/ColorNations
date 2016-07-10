@@ -1,5 +1,6 @@
 package game.team;
 
+import components.gui.MessageBar;
 import game.Game;
 import game.ai.AIBase;
 import game.ai.*;
@@ -19,26 +20,24 @@ import java.util.ArrayList;
  */
 public class Team {
 
-    private int controlled, update, captures;
+    private int controlled, captures;
     private int attack, defend, capture, players;
-    private final int teamMax;
     private byte objective;
     private final boolean[][] territories;
     private final ArrayList<AIMob> mobs;
     //private final ArrayList<Player> players;
     private Point spawn;
 
-    protected CaptureAI c;
-    protected DefendAI d;
-    protected AttackAI a;
+    public CaptureAI c;
+    public DefendAI d;
+    public AttackAI a;
 
     protected Color filter;
     protected SpriteSet slug;
 
     public Team(Dimension mapSize) {
         territories = new boolean[mapSize.height][mapSize.width];
-        objective = 3;
-        teamMax = 10;
+        objective = 0;
         mobs = new ArrayList<>();
         attack = 0;
         defend = 0;
@@ -104,6 +103,8 @@ public class Team {
             captures -= 200;
             addMob();
         }
+        MessageBar.addMessage(0, 200 - captures + "");
+        MessageBar.addMessage(2, controlled + "");
     }
 
     public void addMob() {
@@ -121,10 +122,6 @@ public class Team {
     }
 
     private void addAIMob(AIMob m) {
-        if (size() >= teamMax) {
-            m.remove();
-            return;
-        }
         Game.LEVEL.add(m);
         mobs.add(m);
         if (isCapture()) {
@@ -164,18 +161,9 @@ public class Team {
             attack--;
         }
     }
-
-    public void changeAI(AIMob m) {
-        if (m.getAIBase() instanceof CaptureAI) {
-            capture--;
-            setDefend(m);
-        } else if (m.getAIBase() instanceof DefendAI) {
-            defend--;
-            setAttack(m);
-        } else if (m.getAIBase() instanceof AttackAI) {
-            attack--;
-            setCapture(m);
-        }
+    
+    public void setAIBase(AIBase b, AIMob m) {
+        m.setAIBase(b);
     }
 
     private void setCapture(AIMob m) {

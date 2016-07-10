@@ -64,7 +64,7 @@ public class CaptureAI extends AIBase {
         }
         Point target = null;
         if (points.isEmpty()) {
-            m.getTeam().changeAI(m);
+            m.getTeam().setAIBase(m.getTeam().a, m);
         } else {
             target = points.get((int) (Math.random() * points.size()));
         }
