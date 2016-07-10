@@ -5,7 +5,6 @@ import game.GameCanvas;
 import graphics.Sprite;
 import java.util.ArrayList;
 import game.entity.Entity;
-import game.tile.Tile;
 import game.entity.projectile.Projectile;
 import game.team.Team;
 import java.awt.Point;

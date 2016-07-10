@@ -17,7 +17,7 @@ import java.awt.Dimension;
 public class GreenTeam extends Team{
 
     public GreenTeam(Dimension mapSize) {
-        super(mapSize);
+        super(mapSize, false);
         filter = new Color(0, 50, 0);
         slug = SpriteSet.getGreenPlayer();
         super.c = CaptureAI.g;

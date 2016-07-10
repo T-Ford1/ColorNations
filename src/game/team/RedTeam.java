@@ -12,7 +12,7 @@ import java.awt.Dimension;
 public class RedTeam extends Team{
 
     public RedTeam(Dimension mapSize) {
-        super(mapSize);
+        super(mapSize, false);
         filter = new Color(50, 0, 0);
         slug = SpriteSet.getRedPlayer();
         super.c = CaptureAI.r;

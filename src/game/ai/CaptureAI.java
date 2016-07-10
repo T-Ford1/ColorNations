@@ -64,7 +64,7 @@ public class CaptureAI extends AIBase {
         }
         Point target = null;
         if (points.isEmpty()) {
-            m.getTeam().setAIBase(m.getTeam().a, m);
+            m.setAIBase(m.getTeam().a);
         } else {
             target = points.get((int) (Math.random() * points.size()));
         }
@@ -130,10 +130,10 @@ public class CaptureAI extends AIBase {
         if (target == null) {
             return null;
         }
-        Player p = Game.LEVEL.getClientPlayer();
+        Player p = Game.LEVEL.getPlayer();
         double distToPlayer = p.getTilePos().distance(me.getTilePos());
         if (p.getTeam() != me.getTeam() && distToPlayer <= dist) {
-            return Game.LEVEL.getClientPlayer();
+            return Game.LEVEL.getPlayer();
         }
         return target;
     }

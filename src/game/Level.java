@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public abstract class Level {
 
     private final ArrayList<Entity> entities;
-    private final ArrayList<Player> players;
+    private Player player;
     protected ArrayList<Team> teams;
     protected Dimension size/*screensize*/, mapSize/*tiles*/, mapPixels;/*pixels*/
 
@@ -31,29 +31,26 @@ public abstract class Level {
 
     public Level(int width, int height) {
         entities = new ArrayList<>();
-        players = new ArrayList<>();
         teams = new ArrayList<>();
         size = new Dimension(width, height);
     }
-    
+
     public void resetClientPlayer() {
         int rX = size.width / 2 - 16;
         int rY = size.height / 2 - 16;
         //int x = 20 * SIZE;
         //int y = 40 * SIZE;
-        add(new Player(teams.get(2), rX, rY));
-        if(getClientPlayer().getTeam() instanceof RedTeam) {
-            teams.get(1).addMob();
-            teams.get(2).addMob();
-        } else if(getClientPlayer().getTeam() instanceof GreenTeam) {
-            teams.get(0).addMob();
-            teams.get(2).addMob();
-        } else if(getClientPlayer().getTeam() instanceof BlueTeam) {
-            teams.get(0).addMob();
-            teams.get(1).addMob();
-        }
+        player = new Player(teams.get(2), rX, rY);
+        teams.get(0).addMob();
+        teams.get(1).addMob();
     }
-    
+
+    private void resetAll() {
+        resetTeams();
+        resetClientPlayer();
+        resetEntities();
+    }
+
     public void resetEntities() {
         entities.clear();
     }
@@ -68,11 +65,7 @@ public abstract class Level {
     protected abstract void init();
 
     public final void add(Entity e) {
-        if (e instanceof Player) {
-            players.add((Player) e);
-        } else {
-            entities.add(e);
-        }
+        entities.add(e);
     }
 
     public void update() {
@@ -84,34 +77,28 @@ public abstract class Level {
                 entities.get(i).update();
             }
         }
-        
-        players.stream().forEach(player -> {
-            player.update();
-            if(player.isRemoved()) {
-                Point spawn = player.getTeam().getSpawnPoint();
-                player.setPosition(spawn.x * Game.SIZE, spawn.y * Game.SIZE);
-                player.setHealth(player.getMaxHealth());
-                player.setRemoved(false);
-                MessageBar.addMessage(1, "You Lost!");
-                resetTeams();
-            }
-        });
+        player.update();
+        if (player.isRemoved()) {
+            Point spawn = player.getTeam().getSpawnPoint();
+            player.setPosition(spawn.x * Game.SIZE, spawn.y * Game.SIZE);
+            player.setHealth(player.getMaxHealth());
+            player.setRemoved(false);
+            MessageBar.addMessage(1, "You Lost!");
+            resetAll();
+        }
         for (int i = 0; i < teams.size(); i++) {
-            if (teams.get(i).size() == 0) {
-                teams.remove(i);
+            Team t = teams.get(i);
+            t.update();
+            if (t.size() == 0) {
+                System.out.println("remove");
+                teams.remove(t);
                 i--;
-            } else {
-                teams.get(i).update();
             }
         }
-        if(teams.size() == 1) {
-            if(getClientPlayer().getTeam().equals(teams.get(0))) {
-                MessageBar.addMessage(1, "You Win. :D");
-                resetTeams();
-            } else {
-                MessageBar.addMessage(1, "You Lost. :(");
-                resetTeams();
-            }
+        if(teams.size() == 1 && teams.get(0) instanceof BlueTeam) {
+            System.out.println("win");
+            resetAll();
+            MessageBar.addMessage(1, "You Win :D");
         }
     }
 
@@ -171,14 +158,12 @@ public abstract class Level {
     }
 
     public void render(GameCanvas frame) {
-        Point p = Game.getRenderPoint(LEVEL.getClientPlayer());
+        Point p = Game.getRenderPoint(LEVEL.getPlayer());
         renderBackground(p, frame);
         entities.stream().forEach((e) -> {
             e.render(frame);
         });
-        players.stream().forEach((player) -> {
-            player.render(frame);
-        });
+        player.render(frame);
     }
 
     public void capture(Team cap, int x, int y) {
@@ -224,8 +209,8 @@ public abstract class Level {
         return mapPixels;
     }
 
-    public Player getClientPlayer() {
-        return players.get(0);
+    public Player getPlayer() {
+        return player;
     }
 
     public Object collision(Entity e) {
@@ -240,10 +225,8 @@ public abstract class Level {
                 return entity;
             }
         }
-        for (Player player : players) {
-            if (e.isCollided(player)) {
-                return player;
-            }
+        if (e.isCollided(player)) {
+            return player;
         }
         return null;
     }
@@ -254,9 +237,5 @@ public abstract class Level {
 
     public ArrayList<Entity> getEntities() {
         return entities;
-    }
-
-    public ArrayList<Player> getPlayers() {
-        return players;
     }
 }

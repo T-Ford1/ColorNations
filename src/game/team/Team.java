@@ -2,11 +2,8 @@ package game.team;
 
 import components.gui.MessageBar;
 import game.Game;
-import game.ai.AIBase;
 import game.ai.*;
 import game.entity.mob.AIMob;
-import game.entity.mob.Mob;
-import game.entity.mob.Player;
 import game.tile.Tile;
 import graphics.SpriteSet;
 import java.awt.Color;
@@ -20,13 +17,13 @@ import java.util.ArrayList;
  */
 public class Team {
 
-    private int controlled, captures;
-    private int attack, defend, capture, players;
-    private byte objective;
+    private int controlled, spawn;
+    protected int toSpawn;
     private final boolean[][] territories;
+    private final boolean player;
     private final ArrayList<AIMob> mobs;
     //private final ArrayList<Player> players;
-    private Point spawn;
+    private Point spawnPoint;
 
     public CaptureAI c;
     public DefendAI d;
@@ -35,18 +32,17 @@ public class Team {
     protected Color filter;
     protected SpriteSet slug;
 
-    public Team(Dimension mapSize) {
+    public Team(Dimension mapSize, boolean p) {
         territories = new boolean[mapSize.height][mapSize.width];
-        objective = 0;
         mobs = new ArrayList<>();
-        attack = 0;
-        defend = 0;
-        capture = 0;
-        players = 0;
         //0 = capture
         //1 = defend
         //2 = attack
         //3 = balanced
+        player = p;
+        controlled = 0;
+        spawn = 0;
+        toSpawn = 100;
         setSpawn();
     }
 
@@ -65,7 +61,7 @@ public class Team {
                 }
             }
         }
-        spawn = temp;
+        spawnPoint = temp;
     }
 
     private boolean isGoodSpawn(int x, int y) {
@@ -83,7 +79,7 @@ public class Team {
     private boolean isTooClose(ArrayList<Team> team, Dimension size, int x, int y) {
         double length = (size.width + size.height) / (team.size() + 1.);
         for (Team t : team) {
-            Point p = t.spawn;
+            Point p = t.spawnPoint;
             int len = Math.abs(p.x - x) + Math.abs(p.y - y);
             if (len <= length) {
                 return true;
@@ -91,31 +87,33 @@ public class Team {
         }
         return false;
     }
-    
+
     public ArrayList<AIMob> getMobs() {
         return mobs;
     }
 
     public void update() {
-        //updates 60 times per sec
-        if (captures > 200) {//spawns a new minion every 50 tile captures
-            captures -= 200;
+        if (spawn > toSpawn) {//spawns a new minion every 200 tile captures
+            spawn -= toSpawn;
             addMob();
         }
-        MessageBar.addMessage(0, 200 - captures + "");
-        MessageBar.addMessage(2, controlled + "");
+        for (int i = 0; i < mobs.size(); i++) {
+            if (mobs.get(i).isRemoved()) {
+                removeTeam(mobs.get(i));
+            }
+        }
+        if (player) {
+            MessageBar.addMessage(0, 200 - spawn + "");
+            MessageBar.addMessage(2, controlled + "");
+        }
     }
 
     public void addMob() {
-        if (spawn == null) {
+        if (spawnPoint == null) {
             return;
         }
-        if(size() != 0 && !controlsTile(spawn.x, spawn.y)) {
-            return;//if your team doesn't control your spawn, you can't respawn.
-        }
-        int x = spawn.x * Game.SIZE;
-        int y = spawn.y * Game.SIZE;
-        
+        int x = spawnPoint.x * Game.SIZE;
+        int y = spawnPoint.y * Game.SIZE;
         AIMob m = new AIMob(this, x, y);
         addAIMob(m);
     }
@@ -123,70 +121,32 @@ public class Team {
     private void addAIMob(AIMob m) {
         Game.LEVEL.add(m);
         mobs.add(m);
-        if (isCapture()) {
-            setCapture(m);
-        } else if (isDefend()) {
-            setDefend(m);
-        } else if (isAttack()) {
-            setAttack(m);
-        } else {
-            setBalanced(m);
-        }
+        setAI(m);
     }
 
-    public void addPlayer() {
-        players++;
-    }
-
-    public void removePlayer() {
-        players--;
-    }
-
-    public void removeTeam(Mob m) {
-        if (m instanceof AIMob) {
-            removeAIMob((AIMob) m);
-        } else if (m instanceof Player) {
-            removePlayer();
-        }
-    }
-
-    private void removeAIMob(AIMob m) {
-        AIBase b = m.getAIBase();
-        if (b instanceof CaptureAI) {
-            capture--;
-        } else if (b instanceof DefendAI) {
-            defend--;
-        } else {
-            attack--;
-        }
-    }
-    
-    public void setAIBase(AIBase b, AIMob m) {
-        m.setAIBase(b);
+    public void removeTeam(AIMob m) {
+        mobs.remove(m);
     }
 
     private void setCapture(AIMob m) {
         m.setAIBase(c);
-        capture++;
     }
 
     private void setDefend(AIMob m) {
         m.setAIBase(d);
-        defend++;
     }
 
     private void setAttack(AIMob m) {
         m.setAIBase(a);
-        attack++;
     }
 
-    private void setBalanced(AIMob m) {
-        if (attack < defend) {
-            setAttack(m);
-        } else if (defend < capture) {
-            setDefend(m);
+    private void setAI(AIMob m) {
+        if (controlled < 500) {
+            m.setAIBase(c);
+        } else if (Math.random() < .5) {
+            m.setAIBase(a);
         } else {
-            setCapture(m);
+            m.setAIBase(d);
         }
     }
 
@@ -202,7 +162,7 @@ public class Team {
         if (territories[y][x]) {
             return;
         }
-        captures++;
+        spawn++;
         controlled++;
         territories[y][x] = true;
     }
@@ -212,7 +172,7 @@ public class Team {
             return;
         }
         controlled--;
-        captures--;
+        spawn--;
         territories[y][x] = false;
     }
 
@@ -221,66 +181,37 @@ public class Team {
     }
 
     public void setCapture() {
-        defend = 0;
-        attack = 0;
-        capture = 0;
         for (AIMob m : mobs) {
             setCapture(m);
         }
-        objective = 0;
     }
 
     public void setDefend() {
-        defend = 0;
-        attack = 0;
-        capture = 0;
         for (AIMob m : mobs) {
             setDefend(m);
         }
-        objective = 1;
     }
 
     public void setAttack() {
-        defend = 0;
-        attack = 0;
-        capture = 0;
         for (AIMob m : mobs) {
             setAttack(m);
         }
-        objective = 2;
     }
 
     public void setBalanced() {
-        defend = 0;
-        attack = 0;
-        capture = 0;
         for (AIMob m : mobs) {
-            setBalanced(m);
+            setAI(m);
         }
-        objective = 3;
     }
 
     public int size() {
-        return defend + attack + capture + players;
+        if(player) {
+            return 1 + mobs.size();
+        }
+        return mobs.size();
     }
 
     public Point getSpawnPoint() {
-        return spawn;
-    }
-
-    public boolean isCapture() {
-        return objective == 0;
-    }
-
-    public boolean isDefend() {
-        return objective == 1;
-    }
-
-    public boolean isAttack() {
-        return objective == 2;
-    }
-
-    public boolean isBalanced() {
-        return objective == 3;
+        return spawnPoint;
     }
 }

@@ -4,6 +4,7 @@ import game.Game;
 import game.entity.mob.AIMob;
 import game.entity.mob.Mob;
 import game.entity.mob.Player;
+import game.team.BlueTeam;
 import game.team.Team;
 import game.tile.Tile;
 import java.awt.Point;
@@ -76,10 +77,10 @@ public class DefendAI extends AIBase {
         if (target == null) {
             return null;
         }
-        Player p = Game.LEVEL.getClientPlayer();
+        Player p = Game.LEVEL.getPlayer();
         double distToPlayer = p.getTilePos().distance(me.getTilePos());
         if (p.getTeam() != me.getTeam() && distToPlayer <= dist) {
-            return Game.LEVEL.getClientPlayer();
+            return Game.LEVEL.getPlayer();
         }
         return target;
     }

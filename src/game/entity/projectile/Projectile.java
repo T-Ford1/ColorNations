@@ -33,7 +33,7 @@ public class Projectile extends Entity {
         source = s;
         xStep = Math.cos(theta) * speed;
         yStep = Math.sin(theta) * speed;
-        move((Math.cos(theta) * 10), (Math.sin(theta) * 10), false);
+        move((Math.cos(theta) * 25), (Math.sin(theta) * 25), false);
     }
 
     public void render(GameCanvas c) {
@@ -51,8 +51,10 @@ public class Projectile extends Entity {
         for (int i = 0; i < 20; i++) {
             //LEVEL.add(new DefaultParticle(this, getX() + 15, getY() + 15, 10 + random.nextInt(25), speed / 7.));
         }
-        if (collision instanceof Mob) {
-            ((Mob) collision).doDamage(damage);
+        if (collision instanceof Mob && !collision.equals(source)) {
+            Mob m = (Mob) collision;
+            if(m.getTeam().equals(source.getTeam())) return;
+            m.doDamage(damage);
         }
     }
 

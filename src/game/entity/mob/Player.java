@@ -19,7 +19,6 @@ public class Player extends Mob {
         super(n, n.getSpawnPoint().x * Game.SIZE, n.getSpawnPoint().y * Game.SIZE);
         renderX = xR;
         renderY = yR;
-        team.addPlayer();
     }
 
     protected void move() {
@@ -37,7 +36,7 @@ public class Player extends Mob {
             return;
         }
         double theta = Math.atan2(target.y, target.x);
-        Projectile proj = new Projectile(this, getX(), getY() + 8, theta);
+        Projectile proj = new Projectile(this, getX() - 8, getY(), theta);
         projectiles.add(proj);
         fire = proj.getFireRate();
     }
@@ -52,7 +51,6 @@ public class Player extends Mob {
             shoot(new Point(mouse.getX() - getRenderX() - 8, mouse.getY() - getRenderY() - 90));
         }
         super.update();
-
     }
 
     public int getMouseX() {
@@ -84,6 +82,6 @@ public class Player extends Mob {
     }
 
     public String toString() {
-        return "player " + hashCode();
+        return "player";
     }
 }

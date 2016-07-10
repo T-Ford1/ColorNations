@@ -23,7 +23,7 @@ public class GameCanvas extends Sprite {
     }
     
     public void render() {
-        Point p = Game.getRenderPoint(Game.LEVEL.getClientPlayer());
+        Point p = Game.getRenderPoint(Game.LEVEL.getPlayer());
         renderX = p.x;
         renderY = p.y;
     }
