@@ -22,7 +22,7 @@ public class Game extends GraphicsComponent {
     public static final int SIZE = 64;
     
     private final GameCanvas canvas;
-    public static VisibleChunks CHUNKS;
+    //public static VisibleChunks CHUNKS;
     public static Level LEVEL;
 
     public Game(Dimension size) {
@@ -33,7 +33,8 @@ public class Game extends GraphicsComponent {
         LEVEL.init();
         LEVEL.resetTeams();
         LEVEL.resetClientPlayer();
-        CHUNKS = new VisibleChunks();
+        //CHUNKS = new VisibleChunks(); used to cause lag
+        //remove it for no lag
     }
     
     public static void reset() {

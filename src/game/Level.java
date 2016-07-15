@@ -89,7 +89,6 @@ public abstract class Level {
         }
         for (int i = 0; i < teams.size(); i++) {
             teams.get(i).update();
-            System.out.println(teams.get(i) + ", " + teams.get(i).size()); 
         }
         if(teams.get(0).size() == 0 && teams.get(1).size() == 0) {
             MessageBar.addMessage(1, "You Win");
@@ -98,7 +97,8 @@ public abstract class Level {
     }
 
     private void renderBackground(Point p, GameCanvas frame) {
-        int step = Game.SIZE * 32;
+        //int step = Game.SIZE * 32; was setup for 32x32 tile wide chunks
+        int step = Game.SIZE;//now for each tile
         int xLeft = p.x / step;
         if (p.x < 0) {
             xLeft--;
@@ -118,11 +118,12 @@ public abstract class Level {
         //choosing the first and last tiles to render
         for (int y = yTop; y <= yBottom; y++) {
             for (int x = xLeft; x <= xRight; x++) {
-                Tile t = Game.CHUNKS.getChunk(x, y);
+                //Tile t = Game.CHUNKS.getChunk(x, y);was obtained from visiblechunks
+                Tile t = getTile(x, y);//now from the getTile method
                 t.render(x * step, y * step, frame);
             }
         }
-        step = Game.SIZE;
+        //step = Game.SIZE;
         xLeft = p.x / step;
         xRight = (p.x + frame.getWidth()) / step;
         yTop = p.y / step;
